@@ -5,7 +5,7 @@ module.exports = appInfo => {
 
   config.keys = appInfo.name;
   config.kafkajs = {
-    host: '127.0.0.1:2181',
+    host: '10.20.10.14:9092',
     sub: [
       {
         groupId: 'consumer-topic',

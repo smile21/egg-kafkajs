@@ -1,16 +1,4 @@
-# egg-kafkajs
-
-[![NPM version][npm-image]][npm-url]
-[![npm download][download-image]][download-url]
-
-[npm-image]: https://img.shields.io/npm/v/egg-kafkajs.svg?style=flat-square
-[npm-url]: https://npmjs.org/package/egg-kafkajs
-[download-image]: https://img.shields.io/npm/dm/egg-kafkajs.svg?style=flat-square
-[download-url]: https://npmjs.org/package/egg-kafkajs
-
-<!--
-Description here.
--->
+# @rokid/egg-kafkajs
 
 [kafka-node](https://github.com/SOHU-Co/kafka-node) plugin for Egg.js.
 
@@ -19,12 +7,7 @@ Description here.
 ## Install
 
 ```bash
-$ npm i egg-kafkajs --save
-```
-or
-
-```bash
-$ yarn add egg-kafkajs
+$ yarn add @rokid/egg-kafkajs
 ```
 
 ## Usage
@@ -33,7 +16,7 @@ $ yarn add egg-kafkajs
 // {app_root}/config/plugin.js
 exports.kafkajs = {
   enable: true,
-  package: 'egg-kafkajs',
+  package: "@rokid/egg-kafkajs",
 };
 ```
 
@@ -42,29 +25,33 @@ exports.kafkajs = {
 ```js
 // {app_root}/config/config.default.js
 config.kafkajs = {
-    host: '127.0.0.1:2181',
-    sub: [
-      {
-        groupId: 'consumer-groupId',
-        topics: [ 'topic1', 'topic2' ],
-        topic1: [ 'key1', 'key2' ],
-        topic2: [ 'key3', 'key4' ],
+  host: "127.0.0.1:2181",
+  sub: [
+    {
+      groupId: "consumer-groupId",
+      topics: ["topic1", "topic2"],
+    },
+  ],
+  producer: {
+    requireAcks: 1,
+    ackTimeoutMs: 1000,
+  },
+  pub: [
+    {
+      topic: "topic102",
+      // 尝试 create topic 时使用的配置信息
+      create: {
+        partitions: 4,
+        replicationFactor: 1,
       },
-    ],
-    pub:
-      {
-        key: 'test',
-        topics: [],
-        // Configuration for when to consider a message as acknowledged, default 1
-        requireAcks: 1,
-        // The amount of time in milliseconds to wait for all acks before considered, default 100ms
-        ackTimeoutMs: 1000,
-        // Partitioner type (default = 0, random = 1, cyclic = 2, keyed = 3, custom = 4), default 0
-        partitionerType: 2,
-        partition: 0,
+      // send message 时传入的配置信息
+      send: {
+        // partition: 4, // 消息发送到指定的 partition, 如不设置会自动按照消息中的 key 字段 hash 分桶
         attributes: 0,
       },
-  };
+    },
+  ],
+};
 ```
 
 ## Structure
@@ -81,9 +68,8 @@ egg-project
 │   |   └── user.js
 │   |   └── response_time.js
 │   └── kafka (optional)  --------> like `controller, service...`
-│       ├── topic1 (optional)  -------> topic name of kafka
-│            ├── key1_comsumer.js(optional)  ------> `key` is the key of topic
-|            └── key2_comsumer.js(optional)
+│       ├── topic1_consumer.js (optional)  -------> topic name of kafka
+│       └── topic2_consumer.js (optional)  -------> topic name of kafka
 ├── config
 |   ├── plugin.js
 |   ├── config.default.js
@@ -93,16 +79,11 @@ egg-project
 |   └── config.unittest.js (optional)
 ```
 
-
 ## Example
 
 see [test/fixtures/apps/kafkajs-test/](test/fixtures/apps/kafkajs-test) for more detail.
 
 <!-- example here -->
-
-## Questions & Suggestions
-
-Please open an issue [here](https://github.com/eggjs/egg/issues).
 
 ## License
 
